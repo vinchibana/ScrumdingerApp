@@ -7,13 +7,25 @@
 
 import SwiftUI
 
-
 @main
 struct ScrumdingerApp: App {
-    @State private var scrums = DailyScrum.sampleData
+
+    @StateObject var store = ScrumStore()
+
     var body: some Scene {
         WindowGroup {
-            ScrumsView(scrums: $scrums)
+            ScrumsView(scrums: $store.scrums) {
+                Task {
+
+                }
+            }
+            .task {
+                do {
+                    try await store.load()
+                } catch {
+                    fatalError(error.localizedDescription)
+                }
+            }
         }
     }
 }
